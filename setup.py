@@ -31,7 +31,7 @@ base_project = "ccs-twistedextensions"
 
 
 #
-# Utilities
+# Utilities*
 #
 def find_packages():
     modules = [
