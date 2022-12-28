@@ -294,9 +294,11 @@ class ChildSpawningService(Service, object):
         """
         @param dispatcher: The dispatcher managing inbound connections.
         @type dispatcher: L{InheritedSocketDispatcher}
+
         @param maxProcessCount: The maximum number of child processes that may
             be spawned.
         @type maxProcessCount: L{int}
+
         @param highWaterMark: The high-end number of connections that each
             process should be given before new processes should be spawned.
         @type highWaterMark: L{int}
@@ -316,6 +318,7 @@ class ChildSpawningService(Service, object):
     def totalEffectiveLoad(self):
         """
         Compute the sum of the effective load of all child process.
+
         @return: The total effective load accross all processes.
         @rtype: L{float}
         """
@@ -402,9 +405,11 @@ class ChildSpawningService(Service, object):
         """
         Called by L{ChildProcessProtocol} to alert this service that a
         child process has exited.
+
         @param processProtocol: The processProtocol for the child that
             exited.
         @type processProtocol: L{ChildProcessProtocol}
+
         @param reason: The reason that the child exited.
         @type reason: L{Failure}
         """
@@ -651,22 +656,30 @@ class ChildStatus(FancyStrMixin, object):
         """
         Create a L{ConnectionStatus} with a number of sent connections and a
         number of un-acknowledged connections.
+
         @param acknowledged: the number of connections which we know the
             subprocess to be presently processing; i.e. those which have been
             transmitted to the subprocess.
+
         @param unacknowledged: The number of connections which we have sent to
             the subprocess which have never received a status response (a
             "C{+}" status message).
+
         @param total: The total number of acknowledged connections over
             the lifetime of this socket.
+
         @param started: The number of times this worker has been started.
+
         @param abandoned: The number of connections which have been sent to
             this worker, but were not acknowledged at the moment that the
             worker was stopped.
+
         @param unclosed: The number of sockets which have been sent to the
             subprocess but not yet closed.
+
         @param starting: The process that owns this socket is starting. Do not
             dispatch to it until we receive the started message.
+
         @param stopped: The process that owns this socket has stopped. Do not
             dispatch to it.
         """

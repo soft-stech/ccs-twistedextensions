@@ -62,9 +62,12 @@ class InheritingProtocolFactory(Factory, object):
     incoming connections in a I{master process}, then sends those connections
     off to be inherited by a I{worker process} via an
     L{InheritedSocketDispatcher}.
+
     L{InheritingProtocolFactory} is instantiated in the master process.
+
     @ivar dispatcher: an L{InheritedSocketDispatcher} to use to dispatch
         incoming connections to an appropriate subprocess.
+
     @ivar description: the string to send along with connections received on
         this factory.
     """
@@ -86,14 +89,17 @@ class _SubprocessSocket(FileDescriptor, object):
     """
     A socket in the master process pointing at a file descriptor that can be
     used to transmit sockets to a subprocess.
+
     @ivar outSocket: the UNIX socket used as the send1msg() transport.
     @type outSocket: L{socket.socket}
+
     @ivar outgoingSocketQueue: an outgoing queue of sockets to send to the
         subprocess, along with their descriptions (strings describing their
         protocol so that the subprocess knows how to handle them; as of this
         writing, either C{"TCP"} or C{"SSL"})
     @ivar outgoingSocketQueue: a C{list} of 2-tuples of C{(socket-object,
         bytes)}
+
     @ivar status: a record of the last status message received (via
         L{recv1msg}) from the subprocess: this is an application-specific
         indication of how ready this subprocess is to receive more connections.
@@ -101,6 +107,7 @@ class _SubprocessSocket(FileDescriptor, object):
         passed to
     @type status: See L{IStatusWatcher} for an explanation of which methods
         determine this type.
+
     @ivar dispatcher: The socket dispatcher that owns this L{_SubprocessSocket}
     @type dispatcher: L{InheritedSocketDispatcher}
     """
@@ -206,6 +213,7 @@ class IStatus(Interface):
     def effective():
         """
         The current effective load.
+
         @return: The current effective load.
         @rtype: L{int}
         """
@@ -213,6 +221,7 @@ class IStatus(Interface):
     def active():
         """
         Whether the socket should be active (able to be dispatched to).
+
         @return: Active state.
         @rtype: L{bool}
         """
@@ -221,18 +230,21 @@ class IStatus(Interface):
         """
         Worker process is starting. Mark status accordingly but do not make
         it active.
+
         @return: C{self}
         """
 
     def restarted():
         """
         Worker process has signaled it is ready so make this active.
+
         @return: C{self}
         """
 
     def stop():
         """
         Worker process has stopped so make this inactive.
+
         @return: C{self}
         """
 
@@ -257,6 +269,7 @@ class IStatusWatcher(Interface):
     the format of the status messages is only known / understood by the
     C{statusWatcher}, not the L{InheritedSocketDispatcher}.  It's hard to
     explain it in that manner though.)
+
     @note: the intention of this interface is to eventually provide a broader
         notion of what might constitute 'status', so the above explanation just
         explains the current implementation, in for expediency's sake, rather
@@ -267,6 +280,7 @@ class IStatusWatcher(Interface):
         """
         A new socket was created and added to the dispatcher.  Compute an
         initial value for its status.
+
         @return: the new status.
         """
 
@@ -274,8 +288,10 @@ class IStatusWatcher(Interface):
         """
         A new connection was sent to a given socket.  Compute its status based
         on the previous status of that socket.
+
         @param previousStatus: A status value for the socket being sent work,
             previously returned by one of the methods on this interface.
+
         @return: the socket's status after incrementing its outstanding work.
         """
 
@@ -284,8 +300,10 @@ class IStatusWatcher(Interface):
         A status message was received by a worker.  Convert the previous status
         value (returned from L{newConnectionStatus}, L{initialStatus}, or
         L{statusFromMessage}).
+
         @param previousStatus: A status value for the socket being sent work,
             previously returned by one of the methods on this interface.
+
         @return: the socket's status after taking the reported message into
             account.
         """
@@ -294,6 +312,7 @@ class IStatusWatcher(Interface):
         """
         Based on a status previously returned from a method on this
         L{IStatusWatcher}, determine how many sockets may be closed.
+
         @return: a 2-tuple of C{number of sockets that may safely be closed},
             C{new status}.
         @rtype: 2-tuple of (C{int}, C{<opaque>})
@@ -305,8 +324,10 @@ class InheritedSocketDispatcher(object):
     Used by one or more L{InheritingProtocolFactory}s, this keeps track of a
     list of available sockets that connect to I{worker process}es and sends
     inbound connections to be inherited over those sockets, by those processes.
+
     L{InheritedSocketDispatcher} is therefore instantiated in the I{master
     process}.
+
     @ivar statusWatcher: The object which will handle status messages and
         convert them into current statuses, as well as .
     @type statusWatcher: L{IStatusWatcher}
@@ -358,8 +379,10 @@ class InheritedSocketDispatcher(object):
         """
         A connection has been received.  Dispatch it to active sockets, sorted by
         how much work they have.
+
         @param skt: the I{connection socket} (i.e.: not the listening socket)
         @type skt: L{socket.socket}
+
         @param description: some text to identify to the subprocess's
             L{InheritedPort} what type of transport to create for this socket.
         @type description: C{bytes}
@@ -386,6 +409,7 @@ class InheritedSocketDispatcher(object):
         """
         Add a L{send1msg}-oriented AF_UNIX socket to the pool of sockets being
         used for transmitting file descriptors to child processes.
+
         @return: a socket object for the receiving side; pass this object's
             C{fileno()} as part of the C{childFDs} argument to
             C{spawnProcess()}, then close it.
@@ -420,6 +444,7 @@ class InheritedPort(FileDescriptor, object):
             a I{master process}.  We will call L{recv1msg} on this socket to
             receive file descriptors.
         @type fd: C{int}
+
         @param transportFactory: a 4-argument function that takes the socket
             object produced from the file descriptor, the peer address of that
             socket, the (non-ancillary) data sent along with the incoming file
@@ -427,6 +452,7 @@ class InheritedPort(FileDescriptor, object):
             L{ITransport} provider.  Note that this should NOT call
             C{makeConnection} on the protocol that it produces, as this class
             will do that.
+
         @param protocolFactory: an L{IProtocolFactory}
         """
         FileDescriptor.__init__(self)
