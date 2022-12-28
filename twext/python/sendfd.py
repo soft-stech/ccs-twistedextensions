@@ -18,7 +18,7 @@
 from struct import pack, unpack, calcsize
 from socket import SOL_SOCKET
 
-from twisted.python.sendmsg import send1msg, recv1msg, SCM_RIGHTS
+import twisted.python.sendmsg
 
 
 def sendfd(socketfd, fd, description):

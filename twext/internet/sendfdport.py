@@ -176,7 +176,7 @@ class _SubprocessSocket(FileDescriptor, object):
             data, _ignore_flags, _ignore_ancillary = recvmsg(
                 self.outSocket.fileno()
             )
-        except SocketError, se:
+        except SocketError as se:
             if se.errno not in (EAGAIN, ENOBUFS):
                 raise
         else:
@@ -192,7 +192,7 @@ class _SubprocessSocket(FileDescriptor, object):
             skt, desc = self.outgoingSocketQueue.pop(0)
             try:
                 sendfd(self.outSocket.fileno(), skt.fileno(), desc)
-            except SocketError, se:
+            except SocketError as se:
                 if se.errno in (EAGAIN, ENOBUFS):
                     self.outgoingSocketQueue.insert(0, (skt, desc))
                     return
@@ -474,7 +474,7 @@ class InheritedPort(FileDescriptor, object):
         """
         try:
             fd, description = recvfd(self.fd)
-        except SocketError, se:
+        except SocketError as se:
             if se.errno != EAGAIN:
                 raise
         else:
@@ -503,7 +503,7 @@ class InheritedPort(FileDescriptor, object):
             msg = self.statusQueue.pop(0)
             try:
                 send1msg(self.fd, msg, 0)
-            except SocketError, se:
+            except SocketError as se:
                 if se.errno in (EAGAIN, ENOBUFS):
                     self.statusQueue.insert(0, msg)
                     return
